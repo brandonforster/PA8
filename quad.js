@@ -6,17 +6,25 @@ function createQuadProgram(gl)
 	gl.clearColor(0,0,0,1);	
 
 	  // Vertex shader program
-var VSHADER_SOURCE =
-	'attribute vec3 position;\n' +
-	'void main() {\n' +
-	'  gl_Position = vec4(position,1.0);\n' +
-	'}\n';
+		var VSHADER_SOURCE =
+		  'attribute vec3 position;\n' +
+		  'attribute vec2 texCoord;\n' +
+		  'varying vec2 tCoord;\n'+
+		  'void main() {\n' +
+		  '  gl_Position = vec4(position,1.0);\n' +
+		  '	 tCoord = texCoord;\n'+
+		  '}\n';
 
-// Fragment shader program
-var FSHADER_SOURCE =
-	'void main() {\n' +
-	'  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
-	'}\n';
+		// Fragment shader program
+		var FSHADER_SOURCE =
+		  'precision mediump float;\n'+
+		  'uniform sampler2D tex;\n'+
+		  'varying vec2 tCoord;\n'+
+		  'void main() {\n' +
+		  '  vec3 color = texture2D(tex, tCoord).rgb;\n'+
+		  //'  gl_FragColor = vec4(color,1.0);\n' +
+		  '  gl_FragColor = vec4(0.0,1.0,1.0,1.0);\n' +
+		  '}\n';
 
 	  // Create the Program from the shader code.
 	var program = createProgram(gl, VSHADER_SOURCE, FSHADER_SOURCE);
