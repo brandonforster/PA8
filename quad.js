@@ -32,9 +32,8 @@ var FSHADER_SOURCE =
 function Quad(gl, program)
 {
 	var vertices = new Float32Array(
-		[-0.433,-0.25, 0.433, -0.25, 0, 0.5] 
-		// In the class I gave coordinates of a triangle that is double in size of this triangle.
-		);
+		[ -1.0, 1.0,	1.0, 1.0,	1.0,-1.0,  	 // Triangle 1
+          -1.0, 1.0,	1.0,-1.0,	-1.0,-1.0]); // Triangle 2
 		
 		// Get the location/address of the vertex attribute inside the shader program.
 	var a_Position = gl.getAttribLocation(program, 'position');
@@ -66,6 +65,6 @@ function Quad(gl, program)
 
 	this.draw= function()
 	{
-		gl.drawArrays(gl.TRIANGLES, 0, 3);
+		gl.drawArrays(gl.TRIANGLES, 0, 6);
 	}
 }
