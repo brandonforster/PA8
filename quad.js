@@ -42,12 +42,15 @@ function Quad(gl, program)
 		[ -1.0, 1.0,	1.0, 1.0,	1.0,-1.0,  	 // Triangle 1
           -1.0, 1.0,	1.0,-1.0,	-1.0,-1.0]); // Triangle 2
 		
+	var tCoordinates = new Float32Array(
+		[ 0, 1.0,	1.0, 1.0,	1.0,0,  	 // Triangle 1
+          0, 1.0,	1.0,0,	0,0]); // Triangle 2
 	// Get the location/address of the vertex attribute inside the shader program.
 	var a_Position = gl.getAttribLocation(program, 'position');	  
 	var a_TexCoord = gl.getAttribLocation(program, 'texCoord');	
 	// Enable the assignment to a_Position variable
 	gl.enableVertexAttribArray(a_Position); 
-	//gl.enableVertexAttribArray(a_TexCoord); //TODO this line make it stop drawing the square
+	gl.enableVertexAttribArray(a_TexCoord); //TODO this line make it stop drawing the square
 	var samplerLoc = gl.getUniformLocation(program, 'tex');
 
 	// Create a buffer object
@@ -62,14 +65,20 @@ function Quad(gl, program)
 	// Write date into the buffer object
 	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 	
+	var tcBuffer = gl.createBuffer();
+	if (!tcBuffer) 
+	{
+		addMessage('Failed to create the buffer object');
+		return null;
+	}
+	// Bind the buffer object to an ARRAY_BUFFER target
+	gl.bindBuffer(gl.ARRAY_BUFFER, tcBuffer);
+	// Write date into the buffer object
+	gl.bufferData(gl.ARRAY_BUFFER, tCoordinates, gl.STATIC_DRAW);
 	
 
 	gl.useProgram(program);
 
-	// Bind the buffer object to target
-	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-	// Assign the buffer object to a_Position variable
-	gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
 	
 	function createTexture(imageFileName)
 	{
@@ -96,6 +105,13 @@ function Quad(gl, program)
 
 	this.draw= function()
 	{
+		// Bind the buffer object to target
+		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+		// Assign the buffer object to a_Position variable
+		gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+		
+		gl.bindBuffer(gl.ARRAY_BUFFER, tcBuffer);
+		gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, 0, 0);
 		if (tex.complete)
 		{
 			gl.clear(gl.COLOR_BUFFER_BIT);
