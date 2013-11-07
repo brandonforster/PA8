@@ -51,8 +51,8 @@ function main(){
 	var messageField = null;
 	
 	canvas = document.getElementById("myCanvas1");
-	//addMessage(((canvas)?"Canvas acquired":"Error: Can not acquire canvas"));
-	gl = getWebGLContext(canvas,false);//Disable debugging
+	addMessage(((canvas)?"Canvas acquired":"Error: Can not acquire canvas"));
+	var gl = canvas.getContext("experimental-webgl", {stencil:true});
 		
 	program=createShaderProgram(gl);
 	
@@ -61,10 +61,11 @@ function main(){
 	
 	gl.clearColor(0,0,0,1);
 	gl.enable(gl.DEPTH_TEST);
+	gl.enable(gl.STENCIL_TEST); 
 	draw();
 	return 1;
 	function draw(){
-		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+		gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT ); 
 		gl.useProgram(quadProgram);
 		quad.draw();
 		
@@ -78,7 +79,8 @@ function main(){
 		var viewMatrix = camera.getRotatedViewMatrix(angle);
 		gl.uniformMatrix4fv(program.uniformLocations["viewT"], false, viewMatrix.elements);
 
-		model.draw();
+		gl.stencilFunc(gl.EQUAL,0,0xFF);
+		gl.stencilOp( (0 & 0xFF), gl.INVERT, (model.draw() & (0xFF))  );
 		if (rotateFlag){angle++; if (angle > 360) angle -= 360;}
 
 		gl.useProgram(null);
