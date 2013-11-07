@@ -43,14 +43,13 @@ function Quad(gl, program)
 		[ -1.0, 1.0,	1.0, 1.0,	1.0,-1.0,  	 // Triangle 1
           -1.0, 1.0,	1.0,-1.0,	-1.0,-1.0]); // Triangle 2
 		
-		// Get the location/address of the vertex attribute inside the shader program.
-	var a_Position = gl.getAttribLocation(program, 'position');
-
+	// Get the location/address of the vertex attribute inside the shader program.
+	var a_Position = gl.getAttribLocation(program, 'position');	  
+	//var a_TexCoord = gl.getAttribLocation(program, 'texCoord');	  //TODO these lines make it stop drawing the square
 	// Enable the assignment to a_Position variable
 	gl.enableVertexAttribArray(a_Position); 
-	// I did not mention it in the class.
-	// WebGL allows you not to send any data to the attribute. So if you do not want
-	// to send any data then do not enable it.
+	//gl.enableVertexAttribArray(a_TexCoord); 
+	var samplerLoc = gl.getUniformLocation(program, 'tex');
 
 	// Create a buffer object
 	var vertexBuffer = gl.createBuffer();
@@ -63,6 +62,8 @@ function Quad(gl, program)
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 	// Write date into the buffer object
 	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+	
+	
 
 	gl.useProgram(program);
 
@@ -70,9 +71,40 @@ function Quad(gl, program)
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 	// Assign the buffer object to a_Position variable
 	gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+	
+	function createTexture(imageFileName)
+	{
+	  var tex = gl.createTexture();
+	  var img = new Image();
+	  console.log(imageFileName)
+	  img.onload = function(){
+		  console.log("data ready");
+		  tex.complete = img.complete;
+		  gl.bindTexture(gl.TEXTURE_2D, tex);
+		  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+		  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+		  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+		  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+		  gl.bindTexture(gl.TEXTURE_2D, null);
+	  }
+	  img.src = imageFileName;
+	  return tex;
+	}
+	var imageFile = 'lib/texture.png';
+	var tex=createTexture(imageFile);
 
 	this.draw= function()
 	{
-		gl.drawArrays(gl.TRIANGLES, 0, 6);
+		if (tex.complete)
+		{
+			gl.clear(gl.COLOR_BUFFER_BIT);
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D,tex);
+			gl.uniform1i(samplerLoc,0);
+
+			gl.drawArrays(gl.TRIANGLES, 0, 6);
+		}
 	}
 }
