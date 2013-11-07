@@ -22,8 +22,7 @@ function createQuadProgram(gl)
 		  'varying vec2 tCoord;\n'+
 		  'void main() {\n' +
 		  '  vec3 color = texture2D(tex, tCoord).rgb;\n'+
-		  //'  gl_FragColor = vec4(color,1.0);\n' +
-		  '  gl_FragColor = vec4(0.0,1.0,1.0,1.0);\n' +
+		  '  gl_FragColor = vec4(color,1.0);\n' +
 		  '}\n';
 
 	  // Create the Program from the shader code.
@@ -45,10 +44,10 @@ function Quad(gl, program)
 		
 	// Get the location/address of the vertex attribute inside the shader program.
 	var a_Position = gl.getAttribLocation(program, 'position');	  
-	//var a_TexCoord = gl.getAttribLocation(program, 'texCoord');	  //TODO these lines make it stop drawing the square
+	var a_TexCoord = gl.getAttribLocation(program, 'texCoord');	
 	// Enable the assignment to a_Position variable
 	gl.enableVertexAttribArray(a_Position); 
-	//gl.enableVertexAttribArray(a_TexCoord); 
+	//gl.enableVertexAttribArray(a_TexCoord); //TODO this line make it stop drawing the square
 	var samplerLoc = gl.getUniformLocation(program, 'tex');
 
 	// Create a buffer object
