@@ -32,6 +32,7 @@ width: 90%;
 <script src="shaderLightingTexturing.js"></script>
 <script src="jsonRenderable.js"></script>
 <script src="camera.js"></script>
+<script src="quad.js"></script>
 <script type="text/javascript">
 "use strict";
 //This function gets called when reading a JSON file. It stores the current xml information.
@@ -45,16 +46,19 @@ function toggleRotateFlag(){rotateFlag = !rotateFlag;}
 function main(){
 	// ... global variables ...
 	var gl,model,camera,program;
+	var quadProgram, quad;
 	var canvas = null;
 	var messageField = null;
-	function addMessage(message){
-		console.log(message);
-	}
+	
 	canvas = document.getElementById("myCanvas1");
 	//addMessage(((canvas)?"Canvas acquired":"Error: Can not acquire canvas"));
 	gl = getWebGLContext(canvas,false);//Disable debugging
 		
 	program=createShaderProgram(gl);
+	
+	quadProgram= createQuadProgram(gl);
+	quad= new Quad(gl, quadProgram);
+	
 	gl.clearColor(0,0,0,1);
 	gl.enable(gl.DEPTH_TEST);
 	draw();
@@ -70,7 +74,9 @@ function main(){
 		var viewMatrix = camera.getRotatedViewMatrix(angle);
 		gl.uniformMatrix4fv(program.uniformLocations["viewT"], false, viewMatrix.elements);
 
-		model.draw();
+		//model.draw();
+		gl.useProgram(quadProgram);
+		quad.draw();
 		if (rotateFlag){angle++; if (angle > 360) angle -= 360;}
 
 		gl.useProgram(null);
@@ -98,7 +104,7 @@ function main(){
 </script>
 </head>
 <body onload="main();">
-<h2>Brandon Forster PA7</h2>
+<h2>Brandon Forster PA8</h2>
 <br><canvas id="myCanvas1" width="600px" height="600px" style="border:1px solid #FF0000; background: pink"></canvas>
 <br>ModelList:<select id="modelList" onchange="newModelFlag=true;">
   <option value="teapot">teapot</option>
