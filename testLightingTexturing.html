@@ -76,8 +76,9 @@ function main(){
 		var viewMatrix = camera.getRotatedViewMatrix(angle);
 		gl.uniformMatrix4fv(program.uniformLocations["viewT"], false, viewMatrix.elements);
 
-		gl.stencilFunc(gl.EQUAL,0,0xFF);
-		gl.stencilOp( (0 & 0xFF), gl.INVERT, (model.draw() & (0xFF))  );
+		model.draw();
+		gl.stencilFunc(gl.EQUAL,1,0xFF);
+		gl.stencilOp( gl.REPLACE, gl.REPLACE, gl.KEEP  );
 		if (rotateFlag){angle++; if (angle > 360) angle -= 360;}
 
 		gl.useProgram(quadProgram);
