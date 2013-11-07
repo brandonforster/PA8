@@ -25,10 +25,10 @@ text-align:justify;
 width: 90%;
 }
 </style>
-<script src="webgl-utils.js"></script>
-<script src="webgl-debug.js"></script>
-<script src="cuon-utils.js"></script>
-<script src="cuon-matrix.js"></script>
+<script src="lib/webgl-utils.js"></script>
+<script src="lib/webgl-debug.js"></script>
+<script src="lib/cuon-utils.js"></script>
+<script src="lib/cuon-matrix.js"></script>
 <script src="shaderLightingTexturing.js"></script>
 <script src="jsonRenderable.js"></script>
 <script src="camera.js"></script>
@@ -86,7 +86,7 @@ function main(){
 		if (model) model.delete();
 		if (!path) path = getCurrentModelPath();
 		console.log(path);
-		model=new JsonRenderable(gl,program,"./model/"+path+"/models/","model.json");
+		model=new JsonRenderable(gl,program,"./lib/model/"+path+"/models/","model.json");
 		if (!model)alert("No model could be read");
 		else newModelFlag = false;
 		var bounds = model.getBounds();
@@ -104,13 +104,6 @@ function main(){
   <option value="teapot">teapot</option>
   <option value="skull">skull</option>
   <option value="House">House</option>
-  <option value="dabrovic-sponza">sponza</option>
-  		<option value='stPeter/'>St. Peter's</option>
-        <option value='stBasil/'>St. Basil's</option>
-        <option value='Shrine/'>Shrine</option>
-        <option value='House_of_parliament/'>House of Parliament</option>
-        <option value='DijonPalais/'>Dijon Palais</option>
-		<option value='crytek/'>Crytek</option>
 </select>
 Dolly:<input type='button' value='+' onclick="dollyRequired=1;"/>
 	<input type='button' value='-' onclick="dollyRequired=-1;"/>	
