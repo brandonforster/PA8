@@ -5,14 +5,12 @@ function createShaderProgram(gl)
 	  'attribute vec3 position;\n' +
 	  'attribute vec3 normal;\n' +
 	  'attribute vec2 texCoord;\n' +
-	  'uniform mat4 projT,viewT,modelT,normalT,ITmodelT;\n'+
+	  'uniform mat4 projT,viewT,modelT,normalT;\n'+
 	  'uniform vec3 eyePosition;\n'+ // World space coordinate or eye
 	  'varying vec2 tCoord;\n'+
 	  'varying vec3 fragPosition,fragNormal, fragViewDir;\n'+
 	  'void main() {\n' +
 	  '  fragPosition = (viewT*modelT*vec4(position,1.0)).xyz;\n' +
-	  // The line below is how I think it should work, but it just blanks the canvas.
-	  //'  fragNormal = normalize((ITmodelT*vec4(normal,0.0)).xyz);\n' +
 	  '  fragNormal = normalize((viewT*vec4(normal,0.0)).xyz);\n'+
 	  '  fragViewDir = position.xyz - eyePosition;\n'+
 	  '  tCoord = texCoord;\n'+
@@ -25,13 +23,11 @@ function createShaderProgram(gl)
 	  'uniform vec3 diffuseCoeff;\n'+
 	  'uniform sampler2D diffuseTex;\n'+
 	  'uniform samplerCube cubeTex;'+
-	  'uniform int texturingEnabled;\n'+
 	  'uniform vec3 eyePosition;\n' +
 	  'varying vec2 tCoord;\n'+
 	  'varying vec3 fragPosition,fragNormal, fragViewDir;\n'+
 	  'void main() {\n' +
 	  '	 float costheta = max(dot(normalize(-fragPosition),normalize(fragNormal)),0.0);\n'+
-	 // '  vec3 texColor = (texturingEnabled==0)?vec3(1.0):texture2D(diffuseTex,tCoord).rgb;\n'+
 	 '  vec3 viewDir = normalize(fragViewDir);\n'+
 	 '	vec3 normal = normalize(fragNormal);\n' +
 	  '	vec3 reflectDirection = reflect(viewDir,normal);\n' +
@@ -49,7 +45,7 @@ function createShaderProgram(gl)
 	for (i=0; i<attribNames.length;i++){
 		program.attribLocations[attribNames[i]]=gl.getAttribLocation(program, attribNames[i]);
 	}
-	var uniformNames = ['modelT', 'viewT', 'projT', 'normalT', 'diffuseCoeff', 'diffuseTex', 'texturingEnabled'];
+	var uniformNames = ['modelT', 'viewT', 'projT', 'normalT', 'diffuseCoeff', 'diffuseTex', 'cubeTex', 'eyePosition'];
 	program.uniformLocations = {};
 	
 	for (i=0; i<uniformNames.length;i++){
