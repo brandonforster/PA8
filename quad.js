@@ -36,7 +36,7 @@ function createQuadProgram(gl)
 	return program;
 }
 
-function Quad(gl, program)
+function Quad(gl, program, bounds)
 {
 	var vertices = new Float32Array(
 		[ -1.0, 1.0,	1.0, 1.0,	1.0,-1.0,  	 // Triangle 1

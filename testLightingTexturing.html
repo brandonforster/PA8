@@ -61,8 +61,65 @@ function main(){
 	
     texCubeObj = loadCubemap(gl,'lib/skybox/',
 		['posx.jpg','negx.jpg','posy.jpg','negy.jpg','posz.jpg','negz.jpg']);
+	
+    quadProgram= createQuadProgram(gl);
+   
+	
+    gl.clearColor(0,0,0,1);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.STENCIL_TEST); 
+    draw();
+    return 1;
+    function draw(){
+        gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT ); 
+        gl.useProgram(program);
+	
+        if (newModelFlag)
+		{
+			newModel();
+			quad= new Quad(gl, quadProgram, model.getBounds());
+		}
+		
+        if (dollyRequired){camera.dolly(0.05*dollyRequired);dollyRequired=0;}
+		
+        var projMatrix = camera.getProjMatrix();
+        gl.uniformMatrix4fv(program.uniformLocations["projT"], false, projMatrix.elements);
+        var viewMatrix = camera.getRotatedViewMatrix(angle);
+        gl.uniformMatrix4fv(program.uniformLocations["viewT"], false, viewMatrix.elements);
+		gl.colorMask(false,false,false,false);
+		gl.stencilFunc(gl.ALWAYS,1,0xFF);
+        gl.stencilOp( gl.REPLACE, gl.REPLACE, gl.REPLACE );
+        model.draw();
+		gl.colorMask(true,true,true,true);
+		
+ 		gl.stencilFunc(gl.EQUAL,0,0xFF);
+        gl.stencilOp( gl.KEEP, gl.KEEP, gl.KEEP );
+        gl.useProgram(quadProgram);
+        quad.draw();
+		
+        gl.useProgram(null);
 
-    function loadCubemap(gl, cubemappath, texturefiles) 
+       if (rotateFlag){angle++; if (angle > 360) angle -= 360;}
+       window.requestAnimationFrame(draw);
+    }
+    function newModel(path)
+    {
+        function getCurrentModelPath(){
+            return document.getElementById("modelList").value;
+            //return pathname;
+        }
+        if (model) model.delete();
+        if (!path) path = getCurrentModelPath();
+        console.log(path);
+        model=new JsonRenderable(gl,program,"./lib/model/"+path+"/models/","model.json");
+        if (!model)alert("No model could be read");
+        else newModelFlag = false;
+        var bounds = model.getBounds();
+        camera = new Camera(gl,program,bounds,[0,1,0]);
+        var newEye=camera.getRotatedCameraPosition(angle);
+        gl.uniform3f(program.uniformLocations["eyePosition"],newEye[0],newEye[1],newEye[2]);
+    }
+	function loadCubemap(gl, cubemappath, texturefiles) 
     {
         var tex = gl.createTexture();
         tex.complete = false;
@@ -122,56 +179,6 @@ function main(){
             }
             imgs[i].src = cubemappath+texturefiles[i];
         }
-    }
-	
-    quadProgram= createQuadProgram(gl);
-    quad= new Quad(gl, quadProgram);
-	
-    gl.clearColor(0,0,0,1);
-    gl.enable(gl.DEPTH_TEST);
-    //gl.enable(gl.STENCIL_TEST); 
-    draw();
-    return 1;
-    function draw(){
-        gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT ); 
-        gl.useProgram(program);
-	
-        if (newModelFlag)newModel();
-        if (dollyRequired){camera.dolly(0.05*dollyRequired);dollyRequired=0;}
-		
-        var projMatrix = camera.getProjMatrix();
-        gl.uniformMatrix4fv(program.uniformLocations["projT"], false, projMatrix.elements);
-        var viewMatrix = camera.getRotatedViewMatrix(angle);
-        gl.uniformMatrix4fv(program.uniformLocations["viewT"], false, viewMatrix.elements);
-
-        model.draw();
-        gl.stencilFunc(gl.EQUAL,1,0xFF);
-        gl.stencilOp( gl.REPLACE, gl.REPLACE, gl.KEEP  );
-        if (rotateFlag){angle++; if (angle > 360) angle -= 360;}
-
-        gl.useProgram(quadProgram);
-        //quad.draw();
-		
-        gl.useProgram(null);
-
-        window.requestAnimationFrame(draw);
-    }
-    function newModel(path)
-    {
-        function getCurrentModelPath(){
-            return document.getElementById("modelList").value;
-            //return pathname;
-        }
-        if (model) model.delete();
-        if (!path) path = getCurrentModelPath();
-        console.log(path);
-        model=new JsonRenderable(gl,program,"./lib/model/"+path+"/models/","model.json");
-        if (!model)alert("No model could be read");
-        else newModelFlag = false;
-        var bounds = model.getBounds();
-        camera = new Camera(gl,program,bounds,[0,1,0]);
-        var newEye=camera.getRotatedCameraPosition(angle);
-        gl.uniform3f(program.uniformLocations["eyePosition"],newEye[0],newEye[1],newEye[2]);
     }
 }
 </script>
