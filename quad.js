@@ -19,10 +19,11 @@ function createQuadProgram(gl)
 		var FSHADER_SOURCE =
 		  'precision mediump float;\n'+
 		  'uniform sampler2D tex;\n'+
+		  'uniform float alpha;\n' +
 		  'varying vec2 tCoord;\n'+
 		  'void main() {\n' +
 		  '  vec3 color = texture2D(tex, tCoord).rgb;\n'+
-		  '  gl_FragColor = vec4(color,1.0);\n' +
+		  '  gl_FragColor = vec4(color, alpha);\n' +
 		  '}\n';
 
 	  // Create the Program from the shader code.
@@ -52,6 +53,7 @@ function Quad(gl, program, bounds)
 	gl.enableVertexAttribArray(a_Position); 
 	gl.enableVertexAttribArray(a_TexCoord); //TODO this line make it stop drawing the square
 	var samplerLoc = gl.getUniformLocation(program, 'tex');
+	var alphaLoc = gl.getUniformLocation(program, 'alpha');
 
 	// Create a buffer object
 	var vertexBuffer = gl.createBuffer();
@@ -103,7 +105,7 @@ function Quad(gl, program, bounds)
 	var imageFile = 'lib/texture.jpg';
 	var tex=createTexture(imageFile);
 
-	this.draw= function()
+	this.draw= function(alpha)
 	{
 		// Bind the buffer object to target
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -121,5 +123,15 @@ function Quad(gl, program, bounds)
 
 			gl.drawArrays(gl.TRIANGLES, 0, 6);
 		}
+		
+		if (alpha)
+        {
+          gl.uniform1f(alphaLoc, alpha);
+		  console.log("ALPHA BRO");
+        }
+        else
+        {
+          gl.uniform1f(alphaLoc, 1.0);
+        }
 	}
 }
