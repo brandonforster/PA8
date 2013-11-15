@@ -107,6 +107,15 @@ function Quad(gl, program, bounds)
 
 	this.draw= function(alpha)
 	{
+		if (alpha)
+		{
+		  gl.uniform1f(alphaLoc, alpha);
+		}
+		else
+		{
+		  gl.uniform1f(alphaLoc, 1.0);
+		}
+	
 		// Bind the buffer object to target
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 		// Assign the buffer object to a_Position variable
@@ -123,15 +132,5 @@ function Quad(gl, program, bounds)
 
 			gl.drawArrays(gl.TRIANGLES, 0, 6);
 		}
-		
-		if (alpha)
-        {
-          gl.uniform1f(alphaLoc, alpha);
-		  console.log("ALPHA BRO");
-        }
-        else
-        {
-          gl.uniform1f(alphaLoc, 1.0);
-        }
 	}
 }
