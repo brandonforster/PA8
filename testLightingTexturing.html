@@ -49,7 +49,7 @@ var texCubeObj;
 function main(){
     // ... global variables ...
     var gl,model,camera,program;
-    var quadProgram, quad;
+    var quadProgram, quad, reflectionMatrix;
     var canvas = null;
     var messageField = null;
 	
@@ -86,16 +86,17 @@ function main(){
         gl.uniformMatrix4fv(program.uniformLocations["projT"], false, projMatrix.elements);
         var viewMatrix = camera.getRotatedViewMatrix(angle);
         gl.uniformMatrix4fv(program.uniformLocations["viewT"], false, viewMatrix.elements);
-		gl.colorMask(false,false,false,false);
-		gl.stencilFunc(gl.ALWAYS,1,0xFF);
-        gl.stencilOp( gl.REPLACE, gl.REPLACE, gl.REPLACE );
+		//gl.colorMask(false,false,false,false);
+		//gl.stencilFunc(gl.ALWAYS,1,0xFF);
+        //gl.stencilOp( gl.REPLACE, gl.REPLACE, gl.REPLACE );
         model.draw();
-		gl.colorMask(true,true,true,true);
+		model.draw(reflectionMatrix);
+		//gl.colorMask(true,true,true,true);
 		
- 		gl.stencilFunc(gl.EQUAL,0,0xFF);
-        gl.stencilOp( gl.KEEP, gl.KEEP, gl.KEEP );
-        gl.useProgram(quadProgram);
-        quad.draw();
+ 		//gl.stencilFunc(gl.EQUAL,0,0xFF);
+        //gl.stencilOp( gl.KEEP, gl.KEEP, gl.KEEP );
+        //gl.useProgram(quadProgram);
+        //quad.draw();
 		
         gl.useProgram(null);
 
@@ -118,6 +119,9 @@ function main(){
         camera = new Camera(gl,program,bounds,[0,1,0]);
         var newEye=camera.getRotatedCameraPosition(angle);
         gl.uniform3f(program.uniformLocations["eyePosition"],newEye[0],newEye[1],newEye[2]);
+		
+		reflectionMatrix = new Matrix4();
+		reflectionMatrix.elements = new Float32Array([1,0,0,0, 0,-1,0,0, 0,0,1,0, 0,2*bounds.min[1],0,1]);
     }
 	function loadCubemap(gl, cubemappath, texturefiles) 
     {
