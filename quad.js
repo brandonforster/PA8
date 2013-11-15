@@ -39,12 +39,12 @@ function createQuadProgram(gl)
 function Quad(gl, program, bounds)
 {
 	var vertices = new Float32Array(
-		[ -1.0, 1.0,	1.0, 1.0,	1.0,-1.0,  	 // Triangle 1
-          -1.0, 1.0,	1.0,-1.0,	-1.0,-1.0]); // Triangle 2
+		[ -1.0, 0,		1.0, 0,		1.0, -.75,  	 // Triangle 1
+          -1.0, 0,		1.0,-0.75,	-1.0,-0.75]); // Triangle 2
 		
 	var tCoordinates = new Float32Array(
 		[ 0, 1.0,	1.0, 1.0,	1.0,0,  	 // Triangle 1
-          0, 1.0,	1.0,0,	0,0]); // Triangle 2
+          0, 1.0,	1.0,   0,	  0,0]); // Triangle 2
 	// Get the location/address of the vertex attribute inside the shader program.
 	var a_Position = gl.getAttribLocation(program, 'position');	  
 	var a_TexCoord = gl.getAttribLocation(program, 'texCoord');	
@@ -89,7 +89,7 @@ function Quad(gl, program, bounds)
 		  console.log("data ready");
 		  tex.complete = img.complete;
 		  gl.bindTexture(gl.TEXTURE_2D, tex);
-		  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+		  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
 		  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 		  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 		  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -100,7 +100,7 @@ function Quad(gl, program, bounds)
 	  img.src = imageFileName;
 	  return tex;
 	}
-	var imageFile = 'lib/texture.png';
+	var imageFile = 'lib/texture.jpg';
 	var tex=createTexture(imageFile);
 
 	this.draw= function()

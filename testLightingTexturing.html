@@ -66,8 +66,6 @@ function main(){
    
 	
     gl.clearColor(0,0,0,1);
-    gl.enable(gl.DEPTH_TEST);
-    gl.enable(gl.STENCIL_TEST); 
     draw();
     return 1;
     function draw(){
@@ -86,17 +84,36 @@ function main(){
         gl.uniformMatrix4fv(program.uniformLocations["projT"], false, projMatrix.elements);
         var viewMatrix = camera.getRotatedViewMatrix(angle);
         gl.uniformMatrix4fv(program.uniformLocations["viewT"], false, viewMatrix.elements);
-		//gl.colorMask(false,false,false,false);
-		//gl.stencilFunc(gl.ALWAYS,1,0xFF);
-        //gl.stencilOp( gl.REPLACE, gl.REPLACE, gl.REPLACE );
-        model.draw();
-		model.draw(reflectionMatrix);
-		//gl.colorMask(true,true,true,true);
 		
- 		//gl.stencilFunc(gl.EQUAL,0,0xFF);
-        //gl.stencilOp( gl.KEEP, gl.KEEP, gl.KEEP );
-        //gl.useProgram(quadProgram);
-        //quad.draw();
+		//disable blend/stencil test
+		gl.enable(gl.BLEND);
+		gl.enable(gl.STENCIL_TEST);
+		gl.disable(gl.DEPTH_TEST);
+		
+		
+		gl.colorMask(false,false,false,false);
+		gl.stencilFunc(gl.ALWAYS,1,0xFF);
+        gl.stencilOp( gl.REPLACE, gl.REPLACE, gl.REPLACE );
+		
+		model.draw(reflectionMatrix);
+		
+		
+		gl.colorMask(true,true,true,true);
+ 		gl.stencilFunc(gl.EQUAL,0,0xFF);
+        gl.stencilOp( gl.KEEP, gl.KEEP, gl.KEEP );
+		
+        gl.useProgram(quadProgram);
+        quad.draw();
+		
+		
+		//disable blend/stencil test
+		gl.disable(gl.BLEND);
+		gl.disable(gl.STENCIL_TEST);
+		gl.enable(gl.DEPTH_TEST);
+
+		// Draw model
+		gl.useProgram(program);
+		model.draw();
 		
         gl.useProgram(null);
 
