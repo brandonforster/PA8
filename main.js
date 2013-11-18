@@ -1,39 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head charset="UTF-8">
-<title>Brandon Forster</title>
-<style type="text/css">
-textarea {
-    border: thin solid black;
-    position: relative;
-    left: 5px;
-    width: 75%;
-    font: 10pt Consolas;
-    overflow-x:auto;
-    background-color: lightgray;
-    color: brown;
-}
-p
-{
-    text-align:justify;
-    text-indent:25px;
-    width: 90%;
-}
-li
-{
-    text-align:justify;
-    width: 90%;
-}
-</style>
-<script src="lib/webgl-utils.js"></script>
-<script src="lib/webgl-debug.js"></script>
-<script src="lib/cuon-utils.js"></script>
-<script src="lib/cuon-matrix.js"></script>
-<script src="shaderLightingTexturing.js"></script>
-<script src="jsonRenderable.js"></script>
-<script src="camera.js"></script>
-<script src="quad.js"></script>
-<script type="text/javascript">
 "use strict";
 //This function gets called when reading a JSON file. It stores the current xml information.
 
@@ -205,19 +169,3 @@ function main(){
         }
     }
 }
-</script>
-</head>
-<body onload="main();">
-<h2>Brandon Forster PA8</h2>
-<br><canvas id="myCanvas1" width="600px" height="600px" style="border:1px solid #FF0000; background: pink"></canvas>
-<br>ModelList:<select id="modelList" onchange="newModelFlag=true;">
-  <option value="teapot">teapot</option>
-  <option value="skull">skull</option>
-  <option value="House">House</option>
-</select>
-Dolly:<input type='button' value='+' onclick="dollyRequired=1;"/>
-	<input type='button' value='-' onclick="dollyRequired=-1;"/>	
-	<br>
-	Toggle Rotate: <input type='button' value='Toggle' onclick="toggleRotateFlag();"/>	
-</body>
-</html>
