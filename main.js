@@ -13,7 +13,7 @@ var texCubeObj;
 function main(){
     // ... global variables ...
     var gl,model,camera,program;
-    var quadProgram, quad, reflectionMatrix;
+    var quadProgram, quad, quadCam, reflectionMatrix;
     var canvas = null;
     var messageField = null;
 	
@@ -39,6 +39,10 @@ function main(){
         if (newModelFlag)
 		{
 			newModel();
+			var dim = {};
+			dim.min= [-1, -1, 0];
+			dim.max= [1, 1, 0];
+			quadCam= new Camera(gl,quadProgram,dim,[0,1,0]);
 			quad= new Quad(gl, quadProgram, model.getBounds());
 		}
 		
@@ -48,6 +52,12 @@ function main(){
         gl.uniformMatrix4fv(program.uniformLocations["projT"], false, projMatrix.elements);
         var viewMatrix = camera.getRotatedViewMatrix(angle);
         gl.uniformMatrix4fv(program.uniformLocations["viewT"], false, viewMatrix.elements);
+		
+		gl.useProgram(quadProgram);
+		var vLoc = gl.getUniformLocation(quadProgram,"viewT");
+		var quadViewMatrix = quadCam.getRotatedViewMatrix(angle);
+		gl.uniformMatrix4fv(vLoc, false, quadViewMatrix.elements);
+		
 		
 		gl.depthMask(false);
 		//gl.colorMask(false,false,false,false);

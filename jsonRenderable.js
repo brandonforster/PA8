@@ -25,7 +25,6 @@ function JsonRenderable(gl, program, modelPath, modelfilename) {
             else nM = nodeTransformations.normalT[i];
             gl.uniformMatrix4fv(program.uniformLocations["modelT"], false, mM.elements);
             gl.uniformMatrix4fv(program.uniformLocations["normalT"], false, nM.elements);
-            gl.uniformMatrix4fv(program.uniformLocations["ITmodelT"], false, new Matrix4(mM).invert().transpose().elements);
 
             node = model.nodes[i];
             nMeshes = node.meshIndices.length;
