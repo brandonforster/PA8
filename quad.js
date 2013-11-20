@@ -9,11 +9,9 @@ function createQuadProgram(gl)
 		var VSHADER_SOURCE =
 		  'attribute vec3 position;\n' +
 		  'attribute vec2 texCoord;\n' +
-		  'uniform mat4 modelT;'+
-		  'uniform mat4 viewT;'+
 		  'varying vec2 tCoord;\n'+
 		  'void main() {\n' +
-		  '  gl_Position = viewT * modelT * vec4(position,1.0);\n' +
+		  '  gl_Position = vec4(position,1.0);\n' +
 		  '	 tCoord = texCoord;\n'+
 		  '}\n';
 
@@ -42,8 +40,8 @@ function createQuadProgram(gl)
 function Quad(gl, program, bounds)
 {
 	var vertices = new Float32Array(
-		[ -1.0, 1.0,	1.0, 1.0,	1.0, -1,  	 // Triangle 1
-          -1.0, 1,		1.0,-1.0,	-1.0,-1.0]); // Triangle 2
+		[ -1.0, 0,		1.0, 0,		1.0, -.75,  	 // Triangle 1
+          -1.0, 0,		1.0,-0.75,	-1.0,-0.75]); // Triangle 2
 		
 	var tCoordinates = new Float32Array(
 		[ 0, 1.0,	1.0, 1.0,	1.0,0,  	 // Triangle 1
@@ -106,20 +104,9 @@ function Quad(gl, program, bounds)
 	}
 	var imageFile = 'lib/texture.jpg';
 	var tex=createTexture(imageFile);
-	
-	// Get the location/address of the uniform variable inside the shader program.
-	var mLoc = gl.getUniformLocation(program,"modelT");
-	var angle = 0;
-	
 
 	this.draw= function(alpha)
 	{
-		var modelMatrix = new Matrix4(); // Default matrix is an identity matrix.
-		
-		var viewMatrix = new Matrix4(); // Default matrix is an identity matrix.
-		
-		viewMatrix.setRotate(angle, -1, -1, 0);
-		
 		if (alpha)
 		{
 		  gl.uniform1f(alphaLoc, alpha);
@@ -142,8 +129,6 @@ function Quad(gl, program, bounds)
 			gl.activeTexture(gl.TEXTURE0);
 			gl.bindTexture(gl.TEXTURE_2D,tex);
 			gl.uniform1i(samplerLoc,0);
-			gl.uniformMatrix4fv(mLoc, false, modelMatrix.elements);
-			
 
 			gl.drawArrays(gl.TRIANGLES, 0, 6);
 		}
